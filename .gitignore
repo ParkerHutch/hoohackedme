@@ -1,4 +1,6 @@
 rockyou.txt.bz2
 rockyou.txt
 .idea/*
-.ipynb_checkpoints
+.ipynb_checkpoints/*
+/NSENV/*
+/practice/*
