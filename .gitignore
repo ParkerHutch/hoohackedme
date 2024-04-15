@@ -4,3 +4,5 @@ rockyou.txt
 .ipynb_checkpoints/*
 /NSENV/*
 /practice/*
+.DS_Store
+torch-rnn/
