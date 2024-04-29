@@ -1,6 +1,7 @@
 from utils import Model
 import random
 import pickle
+from data_setup import get_data_sets
 
 class MarkovModel(Model):
     def __init__(self):
@@ -75,18 +76,29 @@ class MarkovModel(Model):
         with open(filename, 'rb') as file:
             self.stats = pickle.load(file)
 
+    def generate_char(self, ngram):
+            if ngram in self.stats:
+                # sample from the probability distribution
+                return random.choices(list(self.stats[ngram].keys()), weights=self.stats[ngram].values(), k=1)[0]
+                # return np.random.choice(stats[ngram].keys(), p=stats[ngram].values())
+            else:
+                # print('{} not in stats dict'.format(ngram))
+                return self.generate_char(ngram[0:-1])
+    
+    def generate_password(self, n):
+        output = '`' * n
+        for i in range(100):
+            output += self.generate_char(output[i:i + n])
+            if output[-1] == '\n':
+                return output[0:-1].replace('`', '')[0:-1]
+    
     def generate_passwords(self, count):
         max_ngrams = 3 # ngram size
         num_generate = count # number of passwords to generate
 
         # generate a single new password using a stats dict
         # created during the training phase 
-        def gen_password(n):
-            output = '`' * n
-            for i in range(100):
-                output += gen_char(output[i:i + n])
-                if output[-1] == '\n':
-                    return output[0:-1].replace('`', '')[0:-1]
+        
 
         # Sample a character if the ngram appears in the stats dict.
         # Otherwise recursively decrement n to try smaller grams in
@@ -94,15 +106,7 @@ class MarkovModel(Model):
         # This is a deviation from a vanilla markov text generator
         # which one n-size. This generator uses all values <= n.
         # preferencing higher values of n first. 
-        import random
-        def gen_char(ngram):
-            if ngram in self.stats:
-                # sample from the probability distribution
-                return random.choices(list(self.stats[ngram].keys()), weights=self.stats[ngram].values(), k=1)[0]
-                # return np.random.choice(stats[ngram].keys(), p=stats[ngram].values())
-            else:
-                # print('{} not in stats dict'.format(ngram))
-                return gen_char(ngram[0:-1])
+        
 
         # with open('data/{}-gram.pickle'.format(max_ngrams)) as file:
         # 	stats = pickle.load(file)
@@ -111,7 +115,7 @@ class MarkovModel(Model):
 
         res = []
         for i in range(num_generate):
-            pw = gen_password(max_ngrams)
+            pw = self.generate_password(max_ngrams)
             if pw is not None:
                 res.append(pw)
         return res
@@ -123,3 +127,12 @@ class MarkovModel(Model):
             next_letter_idx = idx + 1
             if next_letter_idx < len(password):
                 probability *= self.stats[first_letter][password[next_letter_idx]]
+
+def main():
+    X_train, _, _ = get_data_sets()
+    model = MarkovModel()
+    model.train(X_train)
+    model.save_to_pickle('markov.pickle')
+
+if __name__ == '__main__':
+    main()

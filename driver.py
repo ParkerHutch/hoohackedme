@@ -1,33 +1,52 @@
 from markov import MarkovModel
 from sklearn.model_selection import train_test_split
+from data_setup import get_data_sets
+import argparse
+import random
 
 def main():
-    lines = []
-    # need errors='ignore' to get rid of some utf-8 errors when decoding
-    with open('rockyou.txt', 'r', encoding='utf-8', errors='ignore') as data_file:
-        for line in data_file:
-            lines.append(line.rstrip())
-
-    test_proportion = 0.2
-    validation_proportion = 0.1
-    test_set_count = (int) (test_proportion * len(lines))
-    validation_set_count = (int) (validation_proportion * len(lines))
-
-
-    X_train, X_test = train_test_split(lines, test_size=test_set_count, random_state=1)
-    X_train, X_val = train_test_split(X_train, test_size=validation_set_count, random_state=1)
     
+    parser = argparse.ArgumentParser(description='Password Generation Tool for NetSec class.')
+    parser.add_argument('--store-markov', help='generate a Markov model and store its pickle in the filename given')
+    parser.add_argument('--load-markov', help='load a Markov model from the pickle in the filename given')
+    parser.add_argument('--store-rnn', help='generate an RNN model and store its pickle in the filename given')
+    parser.add_argument('--load-rnn', help='load an RNN model from the pickle in the filename given')
+    parser.add_argument('--guesses_count', type=int, default=0, help='The number of passwords to generate')
+    parser.add_argument('-o', '--output', type=str, help='The file to write password guesses to')
+    parser.add_argument('-r', '--random_seed', type=int, default=0, help='The random seed')
+    args = parser.parse_args()
+
+    random.seed(args.random_seed)
+
     markov_model = MarkovModel()
-    model = MarkovModel()
-    model.train(X_train)
+    if args.store_markov or args.store_rnn:
+        X_train, X_test, X_val = get_data_sets()
+        if args.store_markov:
+            markov_model.train(X_train)
+            markov_model.save_to_pickle(args.store_markov)
+    elif args.load_markov:
+        markov_model.load_from_pickle(args.load_markov)
+    elif args.load_rnn:
+        pass
+    else:
+        # generate both models?
+        pass
+    
 
-    model.save_to_pickle('test.pickle')
-
-    model.load_from_pickle('test.pickle') # this isn't actually useful at the moment, but it would be if we didn't train before
-
-    passwords = model.generate_passwords(10)
-    print(passwords)
-
-
+    output_file = open(args.output, 'w') if args.output else None
+    try:
+        use_markov = args.store_markov or args.load_markov
+        if args.guesses_count > 0:
+            if use_markov:
+                for _ in range(args.guesses_count):
+                    output_line = markov_model.generate_password(4)
+                    if output_file:
+                        output_file.write(output_line + '\n')
+                    else:
+                        print(output_line)
+    finally:
+        if output_file:
+            output_file.close()
+    
 if __name__ == '__main__':
     main()
