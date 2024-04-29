@@ -18,6 +18,16 @@ def main():
     X_train, X_val = train_test_split(X_train, test_size=validation_set_count, random_state=1)
     
     markov_model = MarkovModel()
+    model = MarkovModel()
+    model.train(X_train)
+
+    model.save_to_pickle('test.pickle')
+
+    model.load_from_pickle('test.pickle') # this isn't actually useful at the moment, but it would be if we didn't train before
+
+    passwords = model.generate_passwords(10)
+    print(passwords)
+
 
 if __name__ == '__main__':
     main()
