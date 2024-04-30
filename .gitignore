@@ -5,4 +5,4 @@ rockyou.txt
 /NSENV/*
 /practice/*
 .DS_Store
-torch-rnn/
+deprecated/

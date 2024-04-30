@@ -5,7 +5,7 @@ BSD License
 import numpy as np
 
 # data I/O
-data = open('temppasswords.txt', 'r').read()  # should be simple plain text file
+data = open('rnn/temppasswords.txt', 'r').read()  # should be simple plain text file
 chars = list(set(data))
 data_size, vocab_size = len(data), len(chars)
 print('data has %d characters, %d unique.' % (data_size, vocab_size))
@@ -85,7 +85,7 @@ def sample(h, seed_ix, n):
 n, p = 0, 0
 mWxh, mWhh, mWhy = np.zeros_like(Wxh), np.zeros_like(Whh), np.zeros_like(Why)
 mbh, mby = np.zeros_like(bh), np.zeros_like(by)  # memory variables for Adagrad
-smooth_loss = -np.log(1.0 / vocab_size) * seq_length  # loss at iteration 0
+smooth_loss = -np.log(1.0 / vocab_size) * seq_length  # loss iteration 0
 while True:
     # prepare inputs (we're sweeping from left to right in steps seq_length long)
     if p + seq_length + 1 >= len(data) or n == 0:
@@ -99,9 +99,16 @@ while True:
         sample_ix = sample(hprev, inputs[0], 200)
         txt = ''.join(ix_to_char[ix] for ix in sample_ix)
         print('----\n %s \n----' % (txt,))
+        """
+            temp_password
+            for each string in input_text:
+                if temp_password at least 1 string
+        """
 
     # forward seq_length characters through the net and fetch gradient
     loss, dWxh, dWhh, dWhy, dbh, dby, hprev = lossFun(inputs, targets, hprev)
+    print("loss", loss)
+    input()
     smooth_loss = smooth_loss * 0.999 + loss * 0.001
     if n % 100 == 0:
         print('iter %d, loss: %f' % (n, smooth_loss))  # print progress
