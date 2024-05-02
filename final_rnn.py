@@ -14,7 +14,7 @@ class RNNModel(Model):
 
     def train(self, train_set):
         # train set is a list of each password: length = 10 million
-        train_set = train_set[:1000]
+        train_set = train_set[:100]
         data = self.convert_to_string(train_set)
         chars = list(set(data))
         data_size, vocab_size = len(data), len(chars)
@@ -120,7 +120,7 @@ class RNNModel(Model):
                 print('iter %d, loss: %f' % (n, smooth_loss))  # print progress
 
             # the important code
-            if smooth_loss < 50.00:
+            if smooth_loss < 10.00:
                 saved = {"hprev": hprev,
                          "p": p,
                          "Wxh": Wxh,
@@ -155,7 +155,7 @@ class RNNModel(Model):
         return self.data
 
     def generate_password(self, n):
-        return self.enerate_passwords(1)
+        return self.generate_passwords(1)
 
     def generate_passwords(self, count):
 
