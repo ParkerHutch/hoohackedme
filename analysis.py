@@ -35,18 +35,18 @@ def main():
 
 if __name__ == "__main__":
     # !!!! this commented out code below was just to create the txt file with training data (lines)
-    lines = []
-    with open('rockyou.txt', 'r', encoding='utf-8', errors='ignore') as data_file:
-        for line in data_file:
-            lines.append(line.rstrip())
-        data_file.close()
-
-    print(len(lines))
-
-    data = lines[:1000]
-    with open("train_data.txt", "w",encoding='utf-8', errors='ignore' ) as train_data_file:
-        for line in data:
-            train_data_file.write(line + "\n")
-        train_data_file.close()
+    # lines = []
+    # with open('rockyou.txt', 'r', encoding='utf-8', errors='ignore') as data_file:
+    #     for line in data_file:
+    #         lines.append(line.rstrip())
+    #     data_file.close()
+    #
+    # print(len(lines))
+    #
+    # data = lines[:1000]
+    # with open("train_data.txt", "w",encoding='utf-8', errors='ignore' ) as train_data_file:
+    #     for line in data:
+    #         train_data_file.write(line + "\n")
+    #     train_data_file.close()
 
     main()
