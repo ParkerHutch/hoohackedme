@@ -151,11 +151,11 @@ class RNNModel(Model):
 
     def load_from_pickle(self, filename):
         with open("saved.pickle", 'rb') as f:
-            data = pickle.load(f)
-        return data
+            self.data = pickle.load(f)
+        return self.data
 
     def generate_password(self, n):
-        pass
+        return self.enerate_passwords(1)
 
     def generate_passwords(self, count):
 
@@ -199,10 +199,17 @@ class RNNModel(Model):
             inputs = [char_to_ix[ch] for ch in d[p:p + seq_length]]
             sample_ix = sample(hprev, inputs[0], 200)
             txt = ''.join(ix_to_char[ix] for ix in sample_ix)
-            print('%s' % (txt,))
+            return '%s' % (txt,)
 
-        for i in range(count):
-            produce_bunch(hprev, p, d, seq_length=100)
+        res = []
+        passwords_generated = 0
+        while passwords_generated < count:
+            for password in produce_bunch(hprev, p, d, seq_length=100).split('\n'):
+                passwords_generated += 1
+                res.append(password)
+        # for i in range(count):
+        #     produce_bunch(hprev, p, d, seq_length=100)
+        return res
 
     def convert_to_string(self, train_set):
         text = ""
@@ -216,7 +223,8 @@ def main():
     X_train, _, _ = get_data_sets()
     model = RNNModel()
     # model.train(X_train)
-    model.generate_passwords(100)
+    model.load_from_pickle('saved.pickle')
+    print(model.generate_passwords(100))
 
 
 if __name__ == '__main__':
