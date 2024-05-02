@@ -14,7 +14,7 @@ class RNNModel(Model):
 
     def train(self, train_set):
         # train set is a list of each password: length = 10 million
-        train_set = train_set[:100]
+        train_set = train_set[:1000]
         data = self.convert_to_string(train_set)
         chars = list(set(data))
         data_size, vocab_size = len(data), len(chars)
@@ -133,6 +133,7 @@ class RNNModel(Model):
                          'data': data}
                 self.data['data'] = saved
                 self.save_to_pickle("saved.pickle")
+                self.generate_passwords(1)
                 exit()
 
             # perform parameter update with Adagrad
@@ -223,9 +224,9 @@ class RNNModel(Model):
 def main():
     X_train, _, _ = get_data_sets()
     model = RNNModel()
-    # model.train(X_train)
-    model.load_from_pickle('saved.pickle')
-    print(model.generate_passwords(100))
+    model.train(X_train)
+    # model.load_from_pickle('saved.pickle')
+    # print(model.generate_passwords(100))
 
 
 if __name__ == '__main__':
