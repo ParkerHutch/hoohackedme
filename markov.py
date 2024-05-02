@@ -3,16 +3,17 @@ import random
 import pickle
 from data_setup import get_data_sets
 
+
 class MarkovModel(Model):
     def __init__(self):
         self.stats = {}
 
     def train(self, train_set):
-        X_train = train_set[::] # make a copy to modify locally
+        X_train = train_set[::]  # make a copy to modify locally
         self.stats = {}
         max_ngrams = 3
         for idx, line in enumerate(X_train):
-            X_train[idx] += '\n' # to make the next part work
+            X_train[idx] += '\n'  # to make the next part work
 
         # create a list of ngrams from a single line in
         # the training data
@@ -37,8 +38,8 @@ class MarkovModel(Model):
             # line = line + '\\n'
             for i in range(max_ngrams):
                 for gram in get_ngram(line, i + 1):
-                    prev = gram[0] # previous characters, ngram
-                    nxt = gram[1] # next character
+                    prev = gram[0]  # previous characters, ngram
+                    nxt = gram[1]  # next character
                     # if this ngram hasn't been seen yet
                     # add it to the stats dict
                     if not prev in self.stats:
@@ -53,7 +54,7 @@ class MarkovModel(Model):
 
         # convert frequency counts to probabilities
         for ngram in self.stats:
-            
+
             chars = []
             occur = []
             probs = []
@@ -67,7 +68,7 @@ class MarkovModel(Model):
 
             for key, value in self.stats[ngram].items():
                 self.stats[ngram][key] = float(value) / float(total)
-    
+
     def save_to_pickle(self, filename):
         with open(filename, 'wb') as file:
             pickle.dump(self.stats, file)
@@ -77,28 +78,27 @@ class MarkovModel(Model):
             self.stats = pickle.load(file)
 
     def generate_char(self, ngram):
-            if ngram in self.stats:
-                # sample from the probability distribution
-                return random.choices(list(self.stats[ngram].keys()), weights=self.stats[ngram].values(), k=1)[0]
-                # return np.random.choice(stats[ngram].keys(), p=stats[ngram].values())
-            else:
-                # print('{} not in stats dict'.format(ngram))
-                return self.generate_char(ngram[0:-1])
-    
+        if ngram in self.stats:
+            # sample from the probability distribution
+            return random.choices(list(self.stats[ngram].keys()), weights=self.stats[ngram].values(), k=1)[0]
+            # return np.random.choice(stats[ngram].keys(), p=stats[ngram].values())
+        else:
+            # print('{} not in stats dict'.format(ngram))
+            return self.generate_char(ngram[0:-1])
+
     def generate_password(self, n):
         output = '`' * n
         for i in range(100):
             output += self.generate_char(output[i:i + n])
             if output[-1] == '\n':
                 return output[0:-1].replace('`', '')[0:-1]
-    
+
     def generate_passwords(self, count):
-        max_ngrams = 3 # ngram size
-        num_generate = count # number of passwords to generate
+        max_ngrams = 3  # ngram size
+        num_generate = count  # number of passwords to generate
 
         # generate a single new password using a stats dict
         # created during the training phase 
-        
 
         # Sample a character if the ngram appears in the stats dict.
         # Otherwise recursively decrement n to try smaller grams in
@@ -106,7 +106,6 @@ class MarkovModel(Model):
         # This is a deviation from a vanilla markov text generator
         # which one n-size. This generator uses all values <= n.
         # preferencing higher values of n first. 
-        
 
         # with open('data/{}-gram.pickle'.format(max_ngrams)) as file:
         # 	stats = pickle.load(file)
@@ -128,11 +127,13 @@ class MarkovModel(Model):
             if next_letter_idx < len(password):
                 probability *= self.stats[first_letter][password[next_letter_idx]]
 
+
 def main():
     X_train, _, _ = get_data_sets()
     model = MarkovModel()
     model.train(X_train)
     model.save_to_pickle('markov.pickle')
+
 
 if __name__ == '__main__':
     main()

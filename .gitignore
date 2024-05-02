@@ -6,3 +6,4 @@ rockyou.txt
 /practice/*
 .DS_Store
 deprecated/
+__pycache__/
