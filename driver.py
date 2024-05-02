@@ -56,11 +56,13 @@ def main():
                     else:
                         print(output_line)
             elif use_rnn:
-                for password in rnn_model.generate_passwords(args.guesses_count):
-                    if output_file:
-                        output_file.write(password + '\n')
-                    else:
-                        print(password)
+                rnn_model.generate_passwords(args.guesses_count)
+                # for password in rnn_model.generate_passwords(args.guesses_count):
+                #     if output_file:
+                #         output_file.write(password + '\n')
+                #     else:
+                #         # print(password)
+                #         pass
 
     finally:
         if output_file:

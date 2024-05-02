@@ -207,8 +207,9 @@ class RNNModel(Model):
         while passwords_generated < count:
             for password in produce_bunch(hprev, p, d, seq_length=100).split('\n'):
                 if password:
+                    print(password)
                     passwords_generated += 1
-                    res.append(password)
+                    # res.append(password)
         # for i in range(count):
         #     produce_bunch(hprev, p, d, seq_length=100)
         return res
