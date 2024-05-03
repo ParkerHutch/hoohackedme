@@ -9,28 +9,45 @@ class Analysis:
     def run_analysis(self):
         number_correct = 0
         passwords = []
+
         for password in self.model_data:
             if password in self.train_data:
                 number_correct += 1
                 passwords.append(password)
-        print("Number of Passwords Correctly Guessed:", number_correct)
+        
         print("List of correct ones:", passwords)
+        print("Number of Passwords Correctly Guessed:", number_correct)
 
 
 def main():
     model_file = sys.argv[1]
     train_file = sys.argv[2]
+    output_data_file = sys.argv[3]
+
+    
+
+    train_data_set = set()
+    with open(train_file, "r", errors='ignore') as tf:
+        for line in tf:
+            train_data_set.add(line)
 
     model_output = []
-    with open(model_file, "r") as mf:
-        model_output.append(mf.readlines())
+    correct_guesses = 0
 
-    train_data = []
-    with open(train_file, "r") as tf:
-        train_data.append(tf.readlines())
+    output_filename = sys.argv[3]
+    with open(output_filename, 'w') as analysis_output_file:
+        analysis_output_file.write('Guess #, Correct Guesses Total\n')
+        with open(model_file, "r") as mf:
+            for idx, line in enumerate(mf):
+                if line in train_data_set:
+                    correct_guesses += 1
+                    analysis_output_file.write(f'{idx + 1}, {correct_guesses}\n')
+                    # print(idx, correct_guesses)
+            # model_output.append(line)
+            # model_output.append(mf.readlines())
 
-    analyzer = Analysis(model_data=model_output, train_data=train_data)
-    analyzer.run_analysis()
+    # analyzer = Analysis(model_data=model_output, train_data=train_data_set)
+    # analyzer.run_analysis()
 
 
 if __name__ == "__main__":
