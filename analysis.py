@@ -22,7 +22,7 @@ class Analysis:
 def main():
     model_file = sys.argv[1]
     train_file = sys.argv[2]
-    output_data_file = sys.argv[3]
+    output_filename = sys.argv[3]
 
     
 
@@ -34,7 +34,7 @@ def main():
     model_output = []
     correct_guesses = 0
 
-    output_filename = sys.argv[3]
+    
     with open(output_filename, 'w') as analysis_output_file:
         analysis_output_file.write('Guess #, Correct Guesses Total\n')
         with open(model_file, "r") as mf:
@@ -45,7 +45,7 @@ def main():
                     # print(idx, correct_guesses)
             # model_output.append(line)
             # model_output.append(mf.readlines())
-
+    print(f'Finished; {correct_guesses} correct guesses found in {model_file}')
     # analyzer = Analysis(model_data=model_output, train_data=train_data_set)
     # analyzer.run_analysis()
 
