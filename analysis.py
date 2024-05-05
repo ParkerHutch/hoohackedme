@@ -39,6 +39,8 @@ def main():
         analysis_output_file.write('Guess #, Correct Guesses Total\n')
         with open(model_file, "r") as mf:
             for idx, line in enumerate(mf):
+                if idx > 10_000_000:
+                    break
                 if line in train_data_set:
                     correct_guesses += 1
                     analysis_output_file.write(f'{idx + 1}, {correct_guesses}\n')
