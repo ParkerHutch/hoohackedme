@@ -151,7 +151,7 @@ class RNNModel(Model):
             pickle.dump(self.data, f)
 
     def load_from_pickle(self, filename):
-        with open("saved.pickle", 'rb') as f:
+        with open(filename, 'rb') as f:
             self.data = pickle.load(f)
         return self.data
 
@@ -160,18 +160,20 @@ class RNNModel(Model):
 
     def generate_passwords(self, count):
 
-        data = self.load_from_pickle("saved.pickle")
+        if not self.data:
+            raise Exception('Model must be trained or loaded from a pickle.')
+        # data = self.load_from_pickle("saved.pickle") # Assume that this will be called
 
-        chars = data['data']['chars']
-        Wxh = data['data']['Wxh']
-        Whh = data['data']['Whh']
-        Why = data['data']['Why']
-        bh = data['data']['bh']
-        by = data['data']['by']
-        d = data['data']['data']
-        vocab_size = data['data']['vocab_size']
-        hprev = data['data']['hprev']
-        p = data['data']['p']
+        chars = self.data['data']['chars']
+        Wxh = self.data['data']['Wxh']
+        Whh = self.data['data']['Whh']
+        Why = self.data['data']['Why']
+        bh = self.data['data']['bh']
+        by = self.data['data']['by']
+        d = self.data['data']['data']
+        vocab_size = self.data['data']['vocab_size']
+        hprev = self.data['data']['hprev']
+        p = self.data['data']['p']
 
 
         char_to_ix = {ch: i for i, ch in enumerate(chars)}
