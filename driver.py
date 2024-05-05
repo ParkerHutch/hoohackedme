@@ -5,7 +5,7 @@ from data_setup import get_data_sets
 import argparse
 import random
 import numpy as np
-
+from combined_model import CombinedModel
 def main():
     
     
@@ -25,6 +25,7 @@ def main():
 
     markov_model = MarkovModel()
     rnn_model = RNNModel()
+    combined_model = None
     if args.store_markov or args.store_rnn:
         X_train, X_test, X_val = get_data_sets()
         if args.store_markov:
@@ -34,21 +35,24 @@ def main():
             rnn_model.train(X_train)
             rnn_model.save_to_pickle(args.store_rnn)
 
-    elif args.load_markov:
+    
+    if args.load_markov:
         markov_model.load_from_pickle(args.load_markov)
-    elif args.load_rnn:
+    if args.load_rnn:
         rnn_model.load_from_pickle(args.load_rnn)
-    else:
-        # generate both models?
-        pass
+    if args.load_markov and args.load_rnn:
+        combined_model = CombinedModel(markov_model=markov_model, rnn_model=rnn_model)
     
 
     output_file = open(args.output, 'w') if args.output else None
     try:
         use_markov = args.store_markov or args.load_markov
         use_rnn = args.store_rnn or args.load_rnn
+        use_combined = use_markov and use_rnn
         if args.guesses_count > 0:
-            if use_markov:
+            if use_combined:
+                combined_model.generate_passwords(args.guesses_count)
+            elif use_markov:
                 for _ in range(args.guesses_count):
                     output_line = markov_model.generate_password(4)
                     if output_file:
