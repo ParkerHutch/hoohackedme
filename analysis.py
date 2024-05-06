@@ -14,7 +14,7 @@ class Analysis:
             if password in self.train_data:
                 number_correct += 1
                 passwords.append(password)
-        
+
         print("List of correct ones:", passwords)
         print("Number of Passwords Correctly Guessed:", number_correct)
 
@@ -24,8 +24,6 @@ def main():
     train_file = sys.argv[2]
     output_filename = sys.argv[3]
 
-    
-
     train_data_set = set()
     with open(train_file, "r", errors='ignore') as tf:
         for line in tf:
@@ -34,7 +32,6 @@ def main():
     model_output = []
     correct_guesses = 0
 
-    
     with open(output_filename, 'w') as analysis_output_file:
         analysis_output_file.write('Guess #, Correct Guesses Total\n')
         with open(model_file, "r") as mf:
