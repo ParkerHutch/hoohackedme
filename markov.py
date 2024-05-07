@@ -1,3 +1,5 @@
+# NOTE: Significant portions of the MarkovModel.train, MarkovModel.generate_char, and MarkovModel.generate_password use code from https://github.com/brannondorsey/markov-passwords
+
 from utils import Model
 import random
 import pickle
@@ -9,6 +11,7 @@ class MarkovModel(Model):
         self.stats = {}
 
     def train(self, train_set):
+        # adapted from https://github.com/brannondorsey/markov-passwords
         X_train = train_set[::]  # make a copy to modify locally
         self.stats = {}
         max_ngrams = 3
@@ -78,6 +81,7 @@ class MarkovModel(Model):
             self.stats = pickle.load(file)
 
     def generate_char(self, ngram):
+        # adapted from https://github.com/brannondorsey/markov-passwords
         if ngram in self.stats:
             # sample from the probability distribution
             return random.choices(list(self.stats[ngram].keys()), weights=self.stats[ngram].values(), k=1)[0]
@@ -87,6 +91,7 @@ class MarkovModel(Model):
             return self.generate_char(ngram[0:-1])
 
     def generate_password(self, n):
+        # adapated from https://github.com/brannondorsey/markov-passwords
         output = '`' * n
         for i in range(100):
             output += self.generate_char(output[i:i + n])
@@ -94,6 +99,8 @@ class MarkovModel(Model):
                 return output[0:-1].replace('`', '')[0:-1]
 
     def generate_passwords(self, count):
+        # adapted from https://github.com/brannondorsey/markov-passwords
+        
         max_ngrams = 3  # ngram size
         num_generate = count  # number of passwords to generate
 
@@ -106,12 +113,6 @@ class MarkovModel(Model):
         # This is a deviation from a vanilla markov text generator
         # which one n-size. This generator uses all values <= n.
         # preferencing higher values of n first. 
-
-        # with open('data/{}-gram.pickle'.format(max_ngrams)) as file:
-        # 	stats = pickle.load(file)
-
-        # start = time.time()
-
         res = []
         for i in range(num_generate):
             pw = self.generate_password(max_ngrams)
